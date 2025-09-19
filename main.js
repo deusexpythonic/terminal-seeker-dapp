@@ -1,0 +1,91 @@
+const output = document.getElementById('output');
+const commandInput = document.getElementById('command-input');
+let storyState = 0; // 0: intro, 1: quete, 2: connexion, 3: jeu
+let wallet; // Variable pour stocker l'objet du portefeuille
+
+function appendToTerminal(text, isCommand = false) {
+    if (isCommand) {
+        output.textContent += `seekers > ${text}\n`;
+    } else {
+        output.textContent += `${text}\n`;
+    }
+    output.scrollTop = output.scrollHeight;
+}
+
+function handleCommand(command) {
+    appendToTerminal(command, true);
+    const lowerCommand = command.trim().toLowerCase();
+
+    if (storyState === 0) {
+        if (lowerCommand === 'start' || lowerCommand === 'commencer') {
+            appendToTerminal("Le voyage du héros commence, non par choix, mais par un appel. Un monde post-IA vous attend. Que ferez-vous ? (entrez 'accepter' ou 'refuser')");
+            storyState = 1;
+        } else {
+            appendToTerminal("Tapez 'start' pour débuter la quête. Ne restez pas immobile, le monde attend d'être découvert.");
+        }
+    } else if (storyState === 1) {
+        if (lowerCommand === 'accepter') {
+            appendToTerminal("Félicitations, Seeker. Vous avez franchi le premier seuil de l'aventure. 'Il n'y a pas de voyage vers la vérité, la vérité est le voyage.' - Alan Watts. Votre premier défi est de vous connecter. (tapez 'connect')");
+            storyState = 2;
+        } else if (lowerCommand === 'refuser') {
+            appendToTerminal("Le refus de l'appel ne mène nulle part. La conscience s'éteint. Votre voyage est terminé. (tapez 'start' pour recommencer)");
+            storyState = 0;
+        } else {
+            appendToTerminal("Commande invalide. (entrez 'accepter' ou 'refuser')");
+        }
+    } else if (storyState === 2) {
+        if (lowerCommand === 'connect') {
+            appendToTerminal("Tentative de connexion au Web3...");
+            
+            // Logique de connexion au portefeuille
+            if (window.solana) {
+                try {
+                    // Cette ligne déclenche l'affichage d'une pop-up de connexion
+                    window.solana.connect();
+                    wallet = window.solana;
+                    
+                    setTimeout(() => {
+                        appendToTerminal("Connexion au portefeuille établie. Le récit peut continuer. Tapez 'help' pour la prochaine étape.");
+                        storyState = 3;
+                    }, 2000); 
+                    
+                } catch (error) {
+                    appendToTerminal(`Erreur de connexion : ${error.message}. Réessayez.`);
+                    console.error(error);
+                }
+            } else {
+                appendToTerminal("Aucun portefeuille Solana détecté. Veuillez installer un portefeuille comme Phantom ou Solflare et rafraîchir la page.");
+                storyState = 0; 
+            }
+        } else {
+            appendToTerminal("Commande invalide. Tapez 'connect' pour continuer.");
+        }
+    } else if (storyState === 3) {
+        if (lowerCommand === 'help') {
+            appendToTerminal("Voici vos options Seeker : 'status', 'progress' et 'quit'.");
+        } else if (lowerCommand === 'status') {
+            appendToTerminal("État du Seeker : Actif. Prêt pour l'aventure.");
+            if (wallet) {
+                appendToTerminal(`Adresse du portefeuille : ${wallet.publicKey.toString()}`);
+            }
+        } else if (lowerCommand === 'progress') {
+            appendToTerminal("Progression dans le Monomythe : Vous êtes au début du voyage du héros.");
+        } else if (lowerCommand === 'quit') {
+            appendToTerminal("Merci d'avoir joué. Le terminal s'éteint... (tapez 'start' pour revenir)");
+            storyState = 0;
+        } else {
+            appendToTerminal("Commande invalide. Tapez 'help' pour voir les commandes disponibles.");
+        }
+    }
+
+    commandInput.value = ''; // Efface le champ de saisie
+}
+
+commandInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        handleCommand(commandInput.value);
+    }
+});
+
+// Message de bienvenue initial
+appendToTerminal("Bienvenue, Seeker. L'univers post-IA est silencieux. Il n'y a que le terminal. Tapez 'start' pour commencer votre voyage.");
