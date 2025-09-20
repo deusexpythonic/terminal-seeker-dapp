@@ -40,24 +40,23 @@ function handleCommand(command) {
     } else if (storyState === 2) {
         if (lowerCommand === 'connect') {
             appendToTerminal("Tentative de connexion au Web3...");
-            
+
             if (window.solana) {
                 try {
                     window.solana.connect();
                     wallet = window.solana;
-                    
+
                     setTimeout(() => {
                         appendToTerminal("Connexion au portefeuille établie. Le récit peut continuer. Tapez 'help' pour la prochaine étape.");
                         storyState = 3;
-                    }, 2000); 
-                    
+                    }, 2000);
                 } catch (error) {
                     appendToTerminal(`Erreur de connexion : ${error.message}. Réessayez.`);
                     console.error(error);
                 }
             } else {
                 appendToTerminal("Aucun portefeuille Solana détecté. Veuillez installer un portefeuille comme Phantom ou Solflare et rafraîchir la page.");
-                storyState = 0; 
+                storyState = 0;
             }
         } else {
             appendToTerminal("Commande invalide. Tapez 'connect' pour continuer.");
@@ -74,7 +73,7 @@ function handleCommand(command) {
             appendToTerminal("Progression dans le Monomythe : Vous êtes au début du voyage du héros.");
         } else if (lowerCommand === 'origine') {
             appendToTerminal("Tentative de contact avec l'Origine...");
-            
+
             // Interaction avec le programme Solana
             // Pour ce MVP, la simple preuve de la clé publique suffit.
             appendToTerminal(`Connexion au programme vérifiée: ${programId.toString()}.`);
