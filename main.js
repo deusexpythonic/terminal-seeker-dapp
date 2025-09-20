@@ -1,3 +1,7 @@
+// Variable globale pour stocker la public key de votre programme Solana
+const programId = new solanaWeb3.PublicKey("3mpYuoNqF7DD1bmcmMY4BZXpH3SLytDxvrfwYZHZsjsT"); // REMPLACEZ CETTE ADRESSE PAR LA VÔTRE
+
+// Le reste de votre code
 const output = document.getElementById('output');
 const commandInput = document.getElementById('command-input');
 let storyState = 0; // 0: intro, 1: quete, 2: connexion, 3: jeu
@@ -37,10 +41,8 @@ function handleCommand(command) {
         if (lowerCommand === 'connect') {
             appendToTerminal("Tentative de connexion au Web3...");
             
-            // Logique de connexion au portefeuille
             if (window.solana) {
                 try {
-                    // Cette ligne déclenche l'affichage d'une pop-up de connexion
                     window.solana.connect();
                     wallet = window.solana;
                     
@@ -62,7 +64,7 @@ function handleCommand(command) {
         }
     } else if (storyState === 3) {
         if (lowerCommand === 'help') {
-            appendToTerminal("Voici vos options Seeker : 'status', 'progress' et 'quit'.");
+            appendToTerminal("Voici vos options Seeker : 'status', 'progress', 'origine' et 'quit'.");
         } else if (lowerCommand === 'status') {
             appendToTerminal("État du Seeker : Actif. Prêt pour l'aventure.");
             if (wallet) {
@@ -70,6 +72,13 @@ function handleCommand(command) {
             }
         } else if (lowerCommand === 'progress') {
             appendToTerminal("Progression dans le Monomythe : Vous êtes au début du voyage du héros.");
+        } else if (lowerCommand === 'origine') {
+            appendToTerminal("Tentative de contact avec l'Origine...");
+            
+            // Interaction avec le programme Solana
+            // Pour ce MVP, la simple preuve de la clé publique suffit.
+            appendToTerminal(`Connexion au programme vérifiée: ${programId.toString()}.`);
+            appendToTerminal("Contact établi. Le récit peut continuer.");
         } else if (lowerCommand === 'quit') {
             appendToTerminal("Merci d'avoir joué. Le terminal s'éteint... (tapez 'start' pour revenir)");
             storyState = 0;
